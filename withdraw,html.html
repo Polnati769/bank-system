@@ -1,0 +1,64 @@
+<!-- ================== WITHDRAW PAGE (withdraw.html) ================== -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Withdraw | Bank System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI", Arial, sans-serif;}
+body{
+min-height:100vh;
+background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+url("https://images.unsplash.com/photo-1601597111158-2fceff292cdc");
+background-size:cover;
+display:flex;justify-content:center;align-items:center;
+}
+.card{background:white;width:420px;padding:30px;border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+.card h2{text-align:center;margin-bottom:20px;color:#b71540;}
+label{font-weight:600;display:block;margin-top:15px;}
+select,input{width:100%;padding:12px;margin-top:5px;border-radius:8px;border:1px solid #ccc;}
+button{margin-top:25px;width:100%;padding:12px;border:none;border-radius:30px;font-size:1rem;cursor:pointer;background:#b71540;color:white;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(6px);
+display:none;justify-content:center;align-items:center;}
+.popup{background:white;padding:30px;border-radius:15px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>Withdraw Amount</h2>
+<label>Select Account</label>
+<select id="accSelect"></select>
+<label>Amount</label>
+<input type="number" id="amount" placeholder="Enter amount">
+<button onclick="withdraw()">Withdraw</button>
+</div>
+<div class="overlay" id="overlay">
+<div class="popup">
+<h3 id="msg">Success</h3><br>
+<button onclick="goDash()">Go to Dashboard</button>
+</div>
+</div>
+<script>
+let accounts = JSON.parse(localStorage.getItem("accounts")) || [];
+let select=document.getElementById("accSelect");
+accounts.forEach(a=>{
+let opt=document.createElement("option");
+opt.value=a.accNo; opt.text=a.accNo+" - "+a.name;
+select.appendChild(opt);
+});
+function withdraw(){
+let accNo=accSelect.value; let amt=Number(amount.value);
+accounts.forEach(a=>{
+if(a.accNo==accNo){
+if(amt>a.balance){alert("Insufficient Balance");return;}
+a.balance-=amt; a.withdrawals+=amt;
+}});
+localStorage.setItem("accounts",JSON.stringify(accounts));
+showMsg("Withdrawal Successful 💸");
+}
+function showMsg(t){msg.innerText=t;overlay.style.display="flex";}
+function goDash(){window.location.href="dashboard.html";}
+</script>
+</body>
+</html>

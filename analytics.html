@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bank Analytics</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Segoe UI",Arial;
+}
+
+body{
+background:
+linear-gradient(rgba(10,61,98,.9),rgba(30,144,255,.9)),
+url("https://images.unsplash.com/photo-1554224155-6726b3ff858f");
+background-size:cover;
+background-attachment:fixed;
+color:white;
+}
+
+/* HEADER */
+header{
+text-align:center;
+padding:30px;
+font-size:1.7rem;
+animation:fadeDown 1.5s ease;
+}
+
+/* CARDS */
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
+padding:40px;
+}
+
+.card{
+background:white;
+color:#333;
+padding:30px;
+border-radius:18px;
+text-align:center;
+box-shadow:0 8px 20px rgba(0,0,0,.2);
+animation:fadeUp 1s ease;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 12px 25px rgba(0,0,0,.3);
+}
+
+.card h3{
+color:#0a3d62;
+margin-bottom:10px;
+}
+
+.card p{
+font-size:1.7rem;
+font-weight:bold;
+}
+
+/* CHART */
+.chart-box{
+width:55%;
+margin:40px auto;
+background:white;
+padding:25px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+animation:fadeUp 1.2s ease;
+}
+
+/* ANIMATION */
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(40px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes fadeDown{
+from{opacity:0;transform:translateY(-40px)}
+to{opacity:1;transform:translateY(0)}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>📊 Bank Data Analytics Dashboard</h1>
+</header>
+
+<div class="cards">
+
+<div class="card">
+<h3>🏦 Total Accounts</h3>
+<p id="accounts"></p>
+</div>
+
+<div class="card">
+<h3>💰 Total Balance</h3>
+<p id="balance"></p>
+</div>
+
+<div class="card">
+<h3>📈 Average Balance</h3>
+<p id="avg"></p>
+</div>
+
+<div class="card">
+<h3>⚠️ Low Balance Accounts</h3>
+<p id="low"></p>
+</div>
+
+</div>
+
+<div class="chart-box">
+<canvas id="chart"></canvas>
+</div>
+
+<script>
+let accounts = JSON.parse(localStorage.getItem("accounts")) || [];
+
+let totalBal = 0;
+let totalDep = 0;
+let totalWith = 0;
+let lowBal = 0;
+
+accounts.forEach(acc=>{
+totalBal += Number(acc.balance);
+totalDep += Number(acc.deposits);
+totalWith += Number(acc.withdrawals);
+
+if(acc.balance < 1000) lowBal++;
+});
+
+document.getElementById("accounts").innerText = accounts.length;
+document.getElementById("balance").innerText = "₹"+totalBal;
+document.getElementById("avg").innerText =
+"₹"+(accounts.length ? (totalBal/accounts.length).toFixed(2) : 0);
+document.getElementById("low").innerText = lowBal;
+
+/* UPDATED CHART */
+new Chart(document.getElementById("chart"),{
+type:'bar',
+data:{
+labels:["Deposits","Withdrawals"],
+datasets:[{
+label:"Bank Transactions",
+data:[totalDep,totalWith],
+backgroundColor:["#1e90ff","#ff6b6b"],
+borderRadius:12
+}]
+},
+options:{
+responsive:true,
+plugins:{
+legend:{
+labels:{color:"#333"}
+}
+},
+scales:{
+y:{ticks:{color:"#333"}},
+x:{ticks:{color:"#333"}}
+}
+}
+});
+</script>
+
+</body>
+</html>
